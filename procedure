@@ -1,0 +1,288 @@
+建立一个JavaWeb工程的步骤
+1.	建立一个javaWeb项目
+2.	在WEB-INF中添加classes和lib两个文件，同时将本项目所生成的class文件指向放入classess文件
+3.	向lib添加如下文件
+  将lib文件导入的工程内
+      antlr-2.7.6.jar
+      cglib-2.2.jar
+      com.springsource.com.mchange.v2.c3p0-0.9.1.2.jar
+      com.springsource.javax.persistence-1.0.0.jar
+      com.springsource.net.sf.cglib-2.2.0.jar
+      com.springsource.org.aopalliance-1.0.0.jar
+      com.springsource.org.apache.commons.logging-1.1.1.jar
+      com.springsource.org.apache.log4j-1.2.15.jar
+      com.springsource.org.aspectj.weaver-1.6.8.RELEASE.jar
+      commons-collections-3.1.jar
+      commons-fileupload-1.3.1.jar
+      commons-io-2.2.jar
+      commons-lang3-3.2.jar
+      commons-lang-2.4.jar
+      dom4j-1.6.1.jar
+      freemarker-2.3.19.jar
+      hibernate3.jar
+      javassist-3.12.0.GA.jar
+      javax.servlet.jsp.jstl.jar
+      jstl-impl.jar
+      jta-1.1.jar
+      mysql-connector-java-5.1.32-bin.jar
+      ognl-3.0.6.jar
+      org.springframework.aop-3.0.2.RELEASE.jar
+      org.springframework.asm-3.0.2.RELEASE.jar
+      org.springframework.aspects-3.0.2.RELEASE.jar
+      org.springframework.beans-3.0.2.RELEASE.jar
+      org.springframework.context-3.0.2.RELEASE.jar
+      org.springframework.core-3.0.2.RELEASE.jar
+      org.springframework.expression-3.0.2.RELEASE.jar
+      org.springframework.jdbc-3.0.2.RELEASE.jar
+      org.springframework.orm-3.0.2.RELEASE.jar
+      org.springframework.transaction-3.0.2.RELEASE.jar
+      org.springframework.web-3.0.2.RELEASE.jar
+      slf4j-api-1.6.1.jar
+      struts2-core-2.3.20.jar
+      struts2-spring-plugin-2.3.20.jar
+      xwork-core-2.3.20.jar
+4.	将信息加入到web.xml文件中
+      web.xml
+      <?xml version="1.0" encoding="UTF-8"?>
+      <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+               version="3.1">
+          <listener>
+              <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+          </listener>
+          <context-param>
+              <param-name>contextConfigLocation</param-name>
+              <param-value>classpath:applicationContext.xml</param-value>
+          </context-param>
+          <filter>
+              <filter-name>struts2</filter-name>
+              <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+          </filter>
+          <filter-mapping>
+              <filter-name>struts2</filter-name>
+              <url-pattern>*.action</url-pattern>
+          </filter-mapping>
+          <welcome-file-list>
+              <welcome-file>index.jsp</welcome-file>
+          </welcome-file-list>
+      </web-app>
+
+5.	在src根目录中添加struts.xml文件
+      struts.xml
+      <?xml version="1.0" encoding="UTF-8"?>
+
+      <!DOCTYPE struts PUBLIC
+              "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+              "http://struts.apache.org/dtds/struts-2.3.dtd">
+      <struts>
+          <!--禁用静态方法访问-->
+          <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+          <!--配置开发模式-->
+          <constant name="struts.devMode" value="true" />
+          <!--把主题配置成simple-->
+          <constant name="struts.ui.theme" value="simple" />
+          <!--配置拓展名为action-->
+          <constant name="struts.action.extension" value="action" />
+          <!—以下文件根据情况自己调整*******************************-->
+          <!--引入外部的struts配置文件-->
+          <package name="emp" extends="struts-default" namespace="/">
+              <!--<action name="hello" class="Action.EmployeeAction" method="save">-->
+                  <!--<result name="success">/success.jsp</result>-->
+              <!--</action>-->
+              <action name="show" class="Action.EmployeeAction" method="findById">
+                  <result name="success">/success.jsp</result>
+              </action>
+          </package>
+          <!—以上文件根据情况自己调整*******************************-->
+      </struts>
+6.	在src根目录中添加applicationContext.xml文件
+      applicationContext.xm
+      <?xml version="1.0" encoding="UTF-8"?>
+      <beans xmlns="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:p="http://www.springframework.org/schema/p"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:aop="http://www.springframework.org/schema/aop"
+             xmlns:tx="http://www.springframework.org/schema/tx"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+              http://www.springframework.org/schema/beans/spring-beans.xsd
+              http://www.springframework.org/schema/context
+               http://www.springframework.org/schema/context/spring-context.xsd
+               http://www.springframework.org/schema/aop
+               http://www.springframework.org/schema/aop/spring-aop.xsd
+               http://www.springframework.org/schema/tx
+              http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+          <!-- 1. 数据源对象: C3P0连接池 -->
+          <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+              <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+              <property name="jdbcUrl" value="jdbc:mysql:///project"></property>
+              <property name="user" value="root"></property>
+              <property name="password" value="123"></property>
+              <property name="initialPoolSize" value="3"></property>
+              <property name="maxPoolSize" value="10"></property>
+              <property name="maxStatements" value="100"></property>
+              <property name="acquireIncrement" value="2"></property>
+          </bean>
+          <!--SessionFactory实例创建-->
+          <!--所有的配置都有spring维护（项目中不需要hibernate.cfg.xml）-->
+          <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+              <property name="dataSource" ref="dataSource"></property>
+              <!--hibernate常用配置：方言，显示sql，自动建表等-->
+              <property name="hibernateProperties">
+                  <props>
+                      <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                      <prop key="hibernate.show_sql">true</prop>
+                      <prop key="hibernate.hbm2ddl.auto">update</prop>
+                      <prop key="javax.persistence.validation.mode">none</prop>
+                      <!--<prop key="current_session_context_class">org.springframework.orm.hibernate3.SpringSessionContext</prop>-->
+                  </props>
+              </property>
+              <!--映射配置-->
+              <property name="mappingLocations">
+                  <list>
+                      <value>classpath:entity/Employee.hbm.xml</value>
+                  </list>
+              </property>
+          </bean>
+
+          <!-- 2. JdbcTemplate工具类实例 -->
+          <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+              <property name="dataSource" ref="dataSource"></property>
+          </bean>
+
+          <!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
+          <!-- #############5. Spring声明式事务管理配置############### -->
+          <!-- 5.1 配置事务管理器类 -->
+          <bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+              <property name="sessionFactory" ref="sessionFactory"></property>
+          </bean>
+          <tx:annotation-driven transaction-manager="txManager"/>
+          <!-- 5.2 配置事务增强(如果管理事务?) -->
+          <tx:advice id="txAdvice" transaction-manager="txManager">
+              <tx:attributes>
+                  <tx:method name="*" read-only="false"/>
+              </tx:attributes>
+          </tx:advice>
+
+          <!-- 5.3 Aop配置： 拦截哪些方法(切入点表表达式) + 应用上面的事务增强配置 -->
+          <aop:config>
+              <aop:pointcut expression="bean(Service)" id="pt"/>
+              <aop:advisor advice-ref="txAdvice" pointcut-ref="pt"/>
+          </aop:config>
+          <!--<bean id="Dao" abstract="false">-->
+              <!--<property name="sessionFactory" ref="sessionFactory"/>-->
+          <!--</bean>-->
+         <import resource="beam-dao.xml"></import>
+
+
+      </beans>
+
+7.	在Action部分中添加类
+      EmployeeAction.java（名字可修该）
+      //必须进行service的IOC注入，以关联spring配置文件
+      public class EmployeeAction extends ActionSupport{
+          //IOC注入
+          @Resource
+          IEmployeeService iEmployeeService;
+
+
+          private Employee employee;
+
+          public void setEmployee(Employee employee) {
+              this.employee = employee;
+          }
+          public String findById(){
+              int k=1;
+              employee =iEmployeeService.findById(k);
+              Map<String,Object> request = (Map<String, Object>) ActionContext.getContext().get("request");
+              request.put("employee", employee);
+              return  SUCCESS;
+          }
+
+          public Employee getEmployee() {
+              return employee;
+          }
+
+          public String save() throws Exception{
+              iEmployeeService.save(employee);
+              return SUCCESS;
+          }
+
+      }
+
+8.	在Service部分中添加类
+        EmployeeService.java
+        //必须进行dao的IOC注入，以关联spring配置文件
+        //可抽取基类作为接口
+        //以下两个注入非常重要
+        @Service("iEmployeeService")
+        @Transactional
+        public class EmployeeService implements IEmployeeService{
+            //IOC注入
+            @Resource
+             IEmployeeDao employeeDao;
+            @Override
+            public void save(Employee emp) {
+                employeeDao.save(emp);
+            }
+
+            @Override
+            public Employee findById(Serializable id) {
+                return employeeDao.findById(id);
+            }
+        }
+
+9.	在Dao部分中添加类
+      EmployeeDao.java
+      //必须进行sessionFactory的IOC注入，以关联spring配置文件
+      //可抽取基类作为接口
+      public class EmployeeDao implements IEmployeeDao {
+          @Resource
+          private SessionFactory sessionFactory;
+
+          public void setSessionFactory(SessionFactory sessionFactory) {
+              this.sessionFactory = sessionFactory;
+          }
+
+          public SessionFactory getSessionFactory() {
+              return sessionFactory;
+          }
+
+          @Override
+          public void save(Employee emp) {
+              sessionFactory.getCurrentSession().save(emp);
+          }
+
+          @Override
+          public void update(Employee emp) {
+
+          }
+
+          @Override
+          public void delete(int id) {
+
+          }
+
+          @Override
+          public Employee findById(Serializable id) {
+              return (Employee) sessionFactory.getCurrentSession().get(Employee.class,id);
+          }
+
+          @Override
+          public List<Employee> getAll() {
+              return null;
+          }
+
+          @Override
+          public List<Employee> getAll(String employeeName) {
+              return null;
+          }
+      }
+
+10.项目中实例化的类（例：demo.java）和数据库中对应的表必须通过相应的配置文件关联(一般取名为demo.hbm.xml)
+ 
+一般工程的项目框架如下
+ 
